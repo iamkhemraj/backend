@@ -10,7 +10,6 @@ class Api::V1::ArticlesController < ApplicationController
     articles = Article.find_by(id: params[:id]);
     if articles
       render json: articles, status:200
-      
     else
       render json:'Article not found';
     end
@@ -33,6 +32,19 @@ class Api::V1::ArticlesController < ApplicationController
     end
   end
 
+  def destroy
+    article = Article.find_by(id: params[:id])
+    if article
+      if article.delete
+        render json: { message: "Data delete successfully!" }, status:200
+      else
+        render json: { error: "Record could not be deletd" }, status: 500
+      end
+    else
+      render json: { error: "Record not found" }, status: 500
+    end
+  end
+
   def update
     article = Article.find_by(id: params[:id])
     if article
@@ -45,19 +57,6 @@ class Api::V1::ArticlesController < ApplicationController
       render json: { error: "Record not found" }, status: 500
     end
   end
-
-  def destroy
-    article = Article.find_by(id: params[:id])
-    if article.destroy
-      render json:{
-        message:'Record delete successfully'
-      }
-    else{
-      render json:{
-        error:'Record does not delete'
-      }
-    }
-    end
 
   private
   def arti_params
