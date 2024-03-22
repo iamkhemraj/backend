@@ -34,20 +34,30 @@ class Api::V1::ArticlesController < ApplicationController
   end
 
   def update
-    articles = Article.find_by(id: params[:id]);
-    if articles
-      articles(title: arti_params[:title], body: arti_params[:body], author: arti_params[:author]);
-      render json: "Update record successfully!"
+    article = Article.find_by(id: params[:id])
+    if article
+      if article.update(title: params[:title], body: params[:body], author: params[:author])
+        render json: { message: "Data updated successfully!" }, status:200
+      else
+        render json: { error: "Record could not be updated" }, status: 500
+      end
     else
-      render json:{
-        error:"Record does not update"
-      }
+      render json: { error: "Record not found" }, status: 500
     end
-
   end
 
   def destroy
-  end
+    article = Article.find_by(id: params[:id])
+    if article.destroy
+      render json:{
+        message:'Record delete successfully'
+      }
+    else{
+      render json:{
+        error:'Record does not delete'
+      }
+    }
+    end
 
   private
   def arti_params
